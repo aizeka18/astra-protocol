@@ -1,0 +1,26 @@
+[33m1ae94ac[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m fix: resolve slither findings and finalize security hardening
+[33m61f6f3f[m ci: add GitHub Actions pipeline and coverage report
+[33m9114061[m test: achieve 90 percent protocol coverage
+[33m03c6e7d[m test: improve governor state coverage
+[33maa3d58b[m test: improve yield vault branch coverage
+[33m2e2428a[m test: add governor lifecycle coverage tests
+[33m9159752[m[33m ([m[1;31morigin/main[m[33m)[m test: improve protocol coverage and invariant testing
+[33m4a19bd8[m docs(deploy): add verified Arbitrum Sepolia deployments
+[33mb6c22d0[m feat(deploy): deploy protocol to Arbitrum Sepolia
+[33m662fb60[m feat(deploy): add realistic protocol deployment flow
+[33me76757a[m feat(mocks): add mock USDC and WETH tokens
+[33mf5c7992[m feat(deploy): add post-deployment verification script
+[33mfeb8eb8[m feat(deploy): add full protocol deployment script
+[33m0c3d5b3[m feat(governance): implement DAO treasury contract
+[33me1d2538[m feat(governance): add governance timelock controller
+[33m3d09730[m feat(governance): implement DAO governor with quorum and timelock support
+[33md4cd467[m feat(oracle): add mock Chainlink aggregator for testing
+[33m87def22[m feat(oracle): implement Chainlink price oracle with stale checks
+[33m2645b39[m feat(vault): add V2 upgradeable vault implementation
+[33mb5c552d[m feat(vault): implement upgradeable ERC4626 yield vault
+[33m800f00c[m feat(factory): implement AMM factory with CREATE2 deployment
+[33md0566a6[m feat(amm): implement constant product AMM with liquidity and swaps
+[33m7d0e302[m feat(token): add LP token for AMM liquidity shares
+[33mbc635a9[m feat(token): implement ERC20Votes governance token
+[33m2a82ffa[m feat(interfaces): add protocol interfaces for AMM, vault, and governance token
+[33m30f088d[m feat(project): initialize foundry project structure
