@@ -27,120 +27,76 @@ import "lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
 contract Deploy is Script {
     function run() external {
-        uint256 deployerPrivateKey =
-            vm.envUint("PRIVATE_KEY");
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
 
-        vm.startBroadcast(
-            deployerPrivateKey
-        );
+        vm.startBroadcast(deployerPrivateKey);
 
-        address deployer =
-            vm.addr(deployerPrivateKey);
+        address deployer = vm.addr(deployerPrivateKey);
 
         // ===== DEPLOY GOVERNANCE TOKEN =====
 
-        GovernanceToken governanceToken =
-            new GovernanceToken(
-                deployer
-            );
+        GovernanceToken governanceToken = new GovernanceToken(deployer);
 
         // ===== TIMELOCK CONFIG =====
 
-        address[] memory proposers =
-            new address[](1);
+        address[] memory proposers = new address[](1);
 
-        address[] memory executors =
-            new address[](1);
+        address[] memory executors = new address[](1);
 
         proposers[0] = deployer;
         executors[0] = deployer;
 
         // ===== DEPLOY TIMELOCK =====
 
-        ProtocolTimelock timelock =
-            new ProtocolTimelock(
-                proposers,
-                executors,
-                deployer
-            );
+        ProtocolTimelock timelock = new ProtocolTimelock(proposers, executors, deployer);
 
         // ===== DEPLOY GOVERNOR =====
 
-        ProtocolGovernor governor =
-            new ProtocolGovernor(
-                governanceToken,
-                timelock
-            );
+        ProtocolGovernor governor = new ProtocolGovernor(governanceToken, timelock);
 
         // ===== DEPLOY TREASURY =====
 
-        Treasury treasury =
-            new Treasury(deployer);
+        Treasury treasury = new Treasury(deployer);
 
         // ===== TRANSFER TREASURY OWNERSHIP =====
 
-        treasury.transferOwnership(
-            address(timelock)
-        );
+        treasury.transferOwnership(address(timelock));
 
         // ===== DEPLOY MOCK TOKENS =====
 
-        MockUSDC usdc =
-            new MockUSDC();
+        MockUSDC usdc = new MockUSDC();
 
-        MockWETH weth =
-            new MockWETH();
+        MockWETH weth = new MockWETH();
 
         // ===== DEPLOY AMM FACTORY =====
 
-        AMMFactory factory =
-            new AMMFactory();
+        AMMFactory factory = new AMMFactory();
 
         // ===== CREATE AMM PAIR =====
 
-        factory.createPair(
-            address(usdc),
-            address(weth)
-        );
+        factory.createPair(address(usdc), address(weth));
 
         // ===== DEPLOY MOCK CHAINLINK FEED =====
 
-        MockAggregatorV3 mockFeed =
-            new MockAggregatorV3(
-                2000e8
-            );
+        MockAggregatorV3 mockFeed = new MockAggregatorV3(2000e8);
 
         // ===== DEPLOY ORACLE =====
 
-        ChainlinkOracle oracle =
-            new ChainlinkOracle(
-                address(mockFeed)
-            );
+        ChainlinkOracle oracle = new ChainlinkOracle(address(mockFeed));
 
         // ===== DEPLOY VAULT IMPLEMENTATION =====
 
-        YieldVault vaultImplementation =
-            new YieldVault();
+        YieldVault vaultImplementation = new YieldVault();
 
         // ===== ENCODE INITIALIZER =====
 
-        bytes memory initData =
-            abi.encodeWithSelector(
-                YieldVault.initialize.selector,
-                IERC20(address(usdc)),
-                deployer
-            );
+        bytes memory initData = abi.encodeWithSelector(YieldVault.initialize.selector, IERC20(address(usdc)), deployer);
 
         // ===== DEPLOY PROXY =====
 
-        ERC1967Proxy proxy =
-            new ERC1967Proxy(
-                address(vaultImplementation),
-                initData
-            );
+        ERC1967Proxy proxy = new ERC1967Proxy(address(vaultImplementation), initData);
 
-        YieldVault vault =
-            YieldVault(address(proxy));
+        YieldVault vault = YieldVault(address(proxy));
 
         vm.stopBroadcast();
     }
