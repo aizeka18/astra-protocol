@@ -20,7 +20,7 @@ export default function RootLayout({
       <body>
         <WagmiProvider config={config}>
           <QueryClientProvider client={queryClient}>
-            <RainbowKitProvider>
+            <RainbowKitProvider modalSize="compact">
               {children}
             </RainbowKitProvider>
           </QueryClientProvider>
