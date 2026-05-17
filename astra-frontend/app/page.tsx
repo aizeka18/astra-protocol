@@ -1,7 +1,11 @@
 'use client'
 
 import { ConnectButton } from '@rainbow-me/rainbowkit'
-import { useAccount, useReadContract } from 'wagmi'
+import {
+  useAccount,
+  useReadContract,
+  useWriteContract,
+} from 'wagmi'
 import { formatEther } from 'viem'
 
 import {
@@ -11,6 +15,7 @@ import {
 
 export default function Home() {
   const { address } = useAccount()
+  const { writeContract } = useWriteContract()
 
   const { data: balance } = useReadContract({
     address: GOVERNANCE_TOKEN_ADDRESS,
@@ -32,7 +37,16 @@ export default function Home() {
     functionName: 'delegates',
     args: address ? [address] : undefined,
   })
+const handleDelegate = async () => {
+  if (!address) return
 
+  writeContract({
+    address: GOVERNANCE_TOKEN_ADDRESS,
+    abi: governanceTokenAbi,
+    functionName: 'delegate',
+    args: [address],
+  })
+}
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-6 bg-black text-white">
       <h1 className="text-5xl font-bold">
@@ -74,6 +88,12 @@ export default function Home() {
             <p className="text-gray-400">Delegate</p>
             <p>{delegate as string}</p>
           </div>
+          <button
+  onClick={handleDelegate}
+  className="rounded-lg bg-white px-4 py-2 text-black font-semibold"
+>
+  Delegate Votes
+</button>
         </div>
       )}
     </main>

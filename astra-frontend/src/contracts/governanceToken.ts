@@ -23,4 +23,12 @@ export const governanceTokenAbi = [
     stateMutability: 'view',
     type: 'function',
   },
+  ,
+{
+  inputs: [{ name: 'delegatee', type: 'address' }],
+  name: 'delegate',
+  outputs: [],
+  stateMutability: 'nonpayable',
+  type: 'function',
+}
 ]
