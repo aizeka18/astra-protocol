@@ -21,7 +21,13 @@ contract ChainlinkOracle {
     }
 
     function getLatestPrice() external view returns (uint256) {
-        (, int256 answer,, uint256 updatedAt,) = priceFeed.latestRoundData();
+        uint80 roundId;
+        int256 answer;
+        uint256 startedAt;
+        uint256 updatedAt;
+        uint80 answeredInRound;
+
+        (roundId, answer, startedAt, updatedAt, answeredInRound) = priceFeed.latestRoundData();
 
         if (answer <= 0) {
             revert InvalidPrice();
@@ -32,5 +38,9 @@ contract ChainlinkOracle {
         }
 
         return uint256(answer);
+    }
+
+    function getPriceFeed() external view returns (address) {
+        return address(priceFeed);
     }
 }

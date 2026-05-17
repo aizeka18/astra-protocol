@@ -30,24 +30,21 @@ contract AMMFactory {
             revert PairAlreadyExists();
         }
 
-        // ===== CREATE =====
-
         LPToken lpToken = new LPToken(address(this));
-
-        // ===== CREATE2 =====
 
         bytes32 salt = keccak256(abi.encodePacked(token0, token1));
 
         pair = address(new AMMPair{salt: salt}(token0, token1, address(lpToken)));
 
-        lpToken.transferOwnership(pair);
-
+        // FIX S-01: CEI — state variables updated BEFORE external call
         getPair[token0][token1] = pair;
         getPair[token1][token0] = pair;
-
         allPairs.push(pair);
 
         emit PairCreated(token0, token1, pair, address(lpToken));
+
+        // External call LAST
+        lpToken.transferOwnership(pair);
     }
 
     function allPairsLength() external view returns (uint256) {
@@ -56,7 +53,6 @@ contract AMMFactory {
 
     function predictPairAddress(address tokenA, address tokenB) external view returns (bytes32 salt) {
         (address token0, address token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
-
         salt = keccak256(abi.encodePacked(token0, token1));
     }
 }
