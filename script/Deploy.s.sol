@@ -15,7 +15,13 @@ import "../src/amm/AMMFactory.sol";
 
 import "../src/oracle/ChainlinkOracle.sol";
 
+import "../src/oracle/MockAggregatorV3.sol";
+
 import "../src/vault/YieldVault.sol";
+
+import "../src/mocks/MockUSDC.sol";
+
+import "../src/mocks/MockWETH.sol";
 
 import "lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
@@ -54,14 +60,27 @@ contract Deploy is Script {
 
         treasury.transferOwnership(address(timelock));
 
+        // ===== DEPLOY MOCK TOKENS =====
+
+        MockUSDC usdc = new MockUSDC();
+
+        MockWETH weth = new MockWETH();
+
         // ===== DEPLOY AMM FACTORY =====
 
         AMMFactory factory = new AMMFactory();
 
+        // ===== CREATE AMM PAIR =====
+
+        factory.createPair(address(usdc), address(weth));
+
+        // ===== DEPLOY MOCK CHAINLINK FEED =====
+
+        MockAggregatorV3 mockFeed = new MockAggregatorV3(2000e8);
+
         // ===== DEPLOY ORACLE =====
 
-        // Replace with real Chainlink feed later
-        ChainlinkOracle oracle = new ChainlinkOracle(address(0x123));
+        ChainlinkOracle oracle = new ChainlinkOracle(address(mockFeed));
 
         // ===== DEPLOY VAULT IMPLEMENTATION =====
 
@@ -70,7 +89,7 @@ contract Deploy is Script {
         // ===== ENCODE INITIALIZER =====
 
         bytes memory initData =
-            abi.encodeWithSelector(YieldVault.initialize.selector, IERC20(address(governanceToken)), msg.sender);
+            abi.encodeWithSelector(YieldVault.initialize.selector, IERC20(address(usdc)), msg.sender);
 
         // ===== DEPLOY PROXY =====
 
