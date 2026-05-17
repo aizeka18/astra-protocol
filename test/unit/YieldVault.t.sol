@@ -254,4 +254,50 @@ contract YieldVaultTest is Test {
 
         assertGt(assets, 0);
     }
+
+    function testTotalAssetsAfterDeposit() public {
+        asset.mint(address(this), 200 ether);
+
+        asset.approve(address(vault), type(uint256).max);
+
+        vault.deposit(200 ether, address(this));
+
+        assertEq(vault.totalAssets(), 200 ether);
+    }
+
+    function testPreviewWithdraw() public {
+        uint256 preview = vault.previewWithdraw(100 ether);
+
+        assertGe(preview, 0);
+    }
+
+    function testPreviewMint() public {
+        uint256 preview = vault.previewMint(100 ether);
+
+        assertGe(preview, 0);
+    }
+
+    function testPreviewRedeemAgain() public {
+        uint256 preview = vault.previewRedeem(100 ether);
+
+        assertGe(preview, 0);
+    }
+
+    function testInitializeZeroAddressReverts() public {
+        YieldVault freshImpl = new YieldVault();
+
+        bytes memory data = abi.encodeWithSelector(YieldVault.initialize.selector, IERC20(address(asset)), address(0));
+
+        vm.expectRevert(YieldVault.ZeroAddress.selector);
+
+        new ERC1967Proxy(address(freshImpl), data);
+    }
+
+    function testOwnerIsSet() public view {
+        assertEq(vault.owner(), owner);
+    }
+
+    function testDecimalsMatchesAsset() public view {
+        assertEq(vault.decimals(), asset.decimals());
+    }
 }

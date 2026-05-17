@@ -154,4 +154,26 @@ contract GovernorTest is Test {
 
         assertEq(token.getVotes(alice), amount);
     }
+
+    function testProposalThresholdValue() public view {
+        assertEq(governor.proposalThreshold(), 10_000 ether);
+    }
+
+    function testQuorumValue() public view {
+        uint256 q = governor.quorum(block.number - 1);
+
+        assertGt(q, 0);
+    }
+
+    function testGovernorName() public view {
+        assertEq(governor.name(), "Astra Governor");
+    }
+
+    function testVotingDelayValue() public view {
+        assertEq(governor.votingDelay(), 7200);
+    }
+
+    function testVotingPeriodValue() public view {
+        assertEq(governor.votingPeriod(), 50400);
+    }
 }

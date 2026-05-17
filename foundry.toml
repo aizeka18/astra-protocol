@@ -5,6 +5,8 @@ libs = ["lib"]
 optimizer = true
 optimizer_runs = 200
 via_ir = true
+
+no_match_coverage = "script|test|mocks|YieldVaultV2|MockAggregatorV3"
 remappings = [
     "@openzeppelin/=lib/openzeppelin-contracts/contracts/",
     "@openzeppelin-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/"

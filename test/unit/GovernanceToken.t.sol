@@ -16,10 +16,6 @@ contract GovernanceTokenTest is Test {
         token = new GovernanceToken(owner);
     }
 
-    // =====================================
-    // BASIC TESTS
-    // =====================================
-
     function testInitialSupply() public {
         assertEq(token.totalSupply(), 1_000_000 ether);
     }
@@ -58,10 +54,6 @@ contract GovernanceTokenTest is Test {
         token.mint(address(0), 100 ether);
     }
 
-    // =====================================
-    // TRANSFER TESTS
-    // =====================================
-
     function testTransferWorks() public {
         vm.prank(owner);
 
@@ -97,10 +89,6 @@ contract GovernanceTokenTest is Test {
 
         token.transfer(bob, 100 ether);
     }
-
-    // =====================================
-    // GOVERNANCE TESTS
-    // =====================================
 
     function testDelegationWorks() public {
         vm.startPrank(owner);
@@ -163,10 +151,6 @@ contract GovernanceTokenTest is Test {
         vm.stopPrank();
     }
 
-    // =====================================
-    // FUZZ TESTS
-    // =====================================
-
     function testFuzzTransfer(uint256 amount) public {
         amount = bound(amount, 1 ether, 1000 ether);
 
@@ -199,5 +183,17 @@ contract GovernanceTokenTest is Test {
         token.delegate(alice);
 
         assertEq(token.getVotes(alice), amount);
+    }
+
+    function testNonces() public view {
+        assertEq(token.nonces(owner), 0);
+    }
+
+    function testTokenName() public view {
+        assertEq(token.name(), "Astra Governance Token");
+    }
+
+    function testTokenSymbol() public view {
+        assertEq(token.symbol(), "AGT");
     }
 }

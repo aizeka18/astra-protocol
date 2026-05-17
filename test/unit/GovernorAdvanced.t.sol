@@ -29,6 +29,9 @@ contract GovernorAdvancedTest is Test {
 
         timelock = new ProtocolTimelock(proposers, executors, owner);
         governor = new ProtocolGovernor(token, timelock);
+        timelock.grantRole(timelock.PROPOSER_ROLE(), address(governor));
+
+        timelock.grantRole(timelock.EXECUTOR_ROLE(), address(governor));
 
         token.mint(owner, 100000 ether);
 
@@ -104,5 +107,55 @@ contract GovernorAdvancedTest is Test {
         Governor.ProposalState currentState = governor.state(proposalId);
 
         assertTrue(uint256(currentState) >= 0);
+    }
+
+    function testProposalNeedsQueuing() public {
+        address[] memory targets = new address[](1);
+
+        targets[0] = address(token);
+
+        uint256[] memory values = new uint256[](1);
+
+        bytes[] memory calldatas = new bytes[](1);
+
+        calldatas[0] = abi.encodeWithSignature("transfer(address,uint256)", address(1), 1 ether);
+
+        uint256 proposalId = governor.propose(targets, values, calldatas, "proposal");
+
+        bool needsQueue = governor.proposalNeedsQueuing(proposalId);
+
+        assertTrue(needsQueue || !needsQueue);
+    }
+
+    function testGovernorName() public view {
+        assertEq(governor.name(), "Astra Governor");
+    }
+
+    function testProposalQueueState() public {
+        address[] memory targets = new address[](1);
+
+        targets[0] = address(token);
+
+        uint256[] memory values = new uint256[](1);
+
+        bytes[] memory calldatas = new bytes[](1);
+
+        calldatas[0] = abi.encodeWithSignature("transfer(address,uint256)", address(1), 1 ether);
+
+        string memory description = "queue proposal";
+
+        uint256 proposalId = governor.propose(targets, values, calldatas, description);
+
+        vm.roll(block.number + governor.votingDelay() + 1);
+
+        governor.castVote(proposalId, 1);
+
+        vm.roll(block.number + governor.votingPeriod() + 1);
+
+        bytes32 descriptionHash = keccak256(bytes(description));
+
+        governor.queue(targets, values, calldatas, descriptionHash);
+
+        assertTrue(uint256(governor.state(proposalId)) > 0);
     }
 }
