@@ -83,4 +83,26 @@ contract GovernorAdvancedTest is Test {
 
         assertTrue(uint256(governor.state(proposalId)) > 0);
     }
+
+    function testStateFunction() public {
+        address[] memory targets = new address[](1);
+
+        targets[0] = address(token);
+
+        uint256[] memory values = new uint256[](1);
+
+        values[0] = 0;
+
+        bytes[] memory calldatas = new bytes[](1);
+
+        calldatas[0] = abi.encodeWithSignature("transfer(address,uint256)", address(1), 1 ether);
+
+        uint256 proposalId = governor.propose(targets, values, calldatas, "proposal");
+
+        vm.roll(block.number + 1);
+
+        Governor.ProposalState currentState = governor.state(proposalId);
+
+        assertTrue(uint256(currentState) >= 0);
+    }
 }
