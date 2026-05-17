@@ -220,4 +220,38 @@ contract YieldVaultTest is Test {
 
         assertEq(shares, 0);
     }
+
+    function testDepositReturnsShares() public {
+        asset.mint(address(this), 100 ether);
+
+        asset.approve(address(vault), type(uint256).max);
+
+        uint256 shares = vault.deposit(100 ether, address(this));
+
+        assertGt(shares, 0);
+    }
+
+    function testWithdrawReturnsShares() public {
+        asset.mint(address(this), 100 ether);
+
+        asset.approve(address(vault), type(uint256).max);
+
+        vault.deposit(100 ether, address(this));
+
+        uint256 shares = vault.withdraw(50 ether, address(this), address(this));
+
+        assertGt(shares, 0);
+    }
+
+    function testRedeemReturnsAssets() public {
+        asset.mint(address(this), 100 ether);
+
+        asset.approve(address(vault), type(uint256).max);
+
+        uint256 shares = vault.deposit(100 ether, address(this));
+
+        uint256 assets = vault.redeem(shares, address(this), address(this));
+
+        assertGt(assets, 0);
+    }
 }
