@@ -6,11 +6,7 @@ interface IGovernanceToken {
 
     function delegate(address delegatee) external;
 
-    function getVotes(
-        address account
-    ) external view returns (uint256);
+    function getVotes(address account) external view returns (uint256);
 
-    function balanceOf(
-        address account
-    ) external view returns (uint256);
+    function balanceOf(address account) external view returns (uint256);
 }
