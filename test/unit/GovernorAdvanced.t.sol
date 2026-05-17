@@ -33,6 +33,7 @@ contract GovernorAdvancedTest is Test {
         token.mint(owner, 100000 ether);
 
         token.delegate(owner);
+        vm.roll(block.number + 1);
     }
 
     function testVotingDelay() public view {
@@ -55,5 +56,31 @@ contract GovernorAdvancedTest is Test {
 
     function testTimelockAddress() public view {
         assertEq(address(governor.timelock()), address(timelock));
+    }
+
+    function testProposalLifecycle() public {
+        address[] memory targets = new address[](1);
+
+        targets[0] = address(token);
+
+        uint256[] memory values = new uint256[](1);
+
+        values[0] = 0;
+
+        bytes[] memory calldatas = new bytes[](1);
+
+        calldatas[0] = abi.encodeWithSignature("transfer(address,uint256)", address(1), 1 ether);
+
+        string memory description = "Test proposal";
+
+        uint256 proposalId = governor.propose(targets, values, calldatas, description);
+
+        vm.roll(block.number + governor.votingDelay() + 1);
+
+        governor.castVote(proposalId, 1);
+
+        vm.roll(block.number + governor.votingPeriod() + 1);
+
+        assertTrue(uint256(governor.state(proposalId)) > 0);
     }
 }
