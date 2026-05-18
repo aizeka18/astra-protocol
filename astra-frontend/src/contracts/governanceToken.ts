@@ -1,5 +1,10 @@
+/**
+ * src/contracts/governanceToken.ts
+ * Fixed: removed duplicate comma that caused undefined entry in ABI array
+ */
+
 export const GOVERNANCE_TOKEN_ADDRESS =
-  '0xca6832828915de91f5cd1db830061f4a07fe22ef'
+  '0x6d4820Cf78b1Ca1A7ec9E1ccfB364e283e56F2ba'
 
 export const governanceTokenAbi = [
   {
@@ -23,12 +28,12 @@ export const governanceTokenAbi = [
     stateMutability: 'view',
     type: 'function',
   },
-  ,
-{
-  inputs: [{ name: 'delegatee', type: 'address' }],
-  name: 'delegate',
-  outputs: [],
-  stateMutability: 'nonpayable',
-  type: 'function',
-}
-]
+  // ✅ Fixed: removed duplicate comma before this entry
+  {
+    inputs: [{ name: 'delegatee', type: 'address' }],
+    name: 'delegate',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+] as const

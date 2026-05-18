@@ -1,0 +1,15 @@
+{
+  "name": "astra-protocol-subgraph",
+  "version": "1.0.0",
+  "description": "The Graph subgraph for Astra Protocol DAO governance on Arbitrum Sepolia",
+  "scripts": {
+    "codegen": "graph codegen",
+    "build":   "graph build",
+    "deploy":  "graph deploy astra-governance",
+    "create":  "graph create --node http://localhost:8020/ astra-governance"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "^0.81.0",
+    "@graphprotocol/graph-ts":  "^0.35.1"
+  }
+}

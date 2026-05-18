@@ -1,11 +1,17 @@
-import '@rainbow-me/rainbowkit/styles.css'
-
-import { getDefaultConfig } from '@rainbow-me/rainbowkit'
+import { createConfig, http } from 'wagmi'
 import { arbitrumSepolia } from 'wagmi/chains'
+import { metaMask, walletConnect } from 'wagmi/connectors'
 
-export const config = getDefaultConfig({
-  appName: 'Astra Protocol',
-  projectId: '2f05ae7e6b5f4f8d9f6b123456789abc',
+const wcProjectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
+
+export const config = createConfig({
   chains: [arbitrumSepolia],
+  connectors: [
+    metaMask(),
+    ...(wcProjectId ? [walletConnect({ projectId: wcProjectId })] : []),
+  ],
+  transports: {
+    [arbitrumSepolia.id]: http(),
+  },
   ssr: true,
 })

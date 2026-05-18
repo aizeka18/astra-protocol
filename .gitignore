@@ -7,9 +7,24 @@ out/
 /broadcast/*/31337/
 /broadcast/**/dry-run/
 
-# Docs
-docs/
-
 # Dotenv file
 .env
-node_modules
+
+# Dependencies
+node_modules/
+
+# Playwright test artifacts
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+/.playwright-mcp/
+
+# Dump / scratch files
+*.dump.txt
+project_dump.txt
+astra-frontend/frontend_dump.txt
+t -vv
+slither_help.txt
+solc_help.txt

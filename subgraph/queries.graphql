@@ -1,0 +1,145 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# Astra Protocol — Documented GraphQL Queries
+# Endpoint: https://api.studio.thegraph.com/query/<ID>/astra-governance/version/latest
+# All amounts in raw wei / token units (18 decimals for AGT, 6 for USDC)
+# ═══════════════════════════════════════════════════════════════════════════
+
+
+# ── Query 1: Recent proposals with vote tallies ──────────────────────────────
+# Returns the 10 most-recent proposals, ordered newest-first, with their
+# current vote counts and status. Used by the governance dashboard.
+query GetRecentProposals {
+  proposals(
+    first: 10
+    orderBy: createdAt
+    orderDirection: desc
+  ) {
+    id
+    proposalId
+    proposer
+    description
+    startBlock
+    endBlock
+    status
+    forVotes
+    againstVotes
+    abstainVotes
+    createdAt
+  }
+}
+
+
+# ── Query 2: Single proposal with full vote log ──────────────────────────────
+# Returns one proposal by its on-chain proposalId together with every vote
+# cast on it, newest first. Used by the proposal detail page.
+query GetProposalDetail($proposalId: String!) {
+  proposals(where: { proposalId: $proposalId }) {
+    id
+    proposalId
+    proposer
+    description
+    startBlock
+    endBlock
+    status
+    forVotes
+    againstVotes
+    abstainVotes
+    createdAt
+    votes(first: 50, orderBy: blockTimestamp, orderDirection: desc) {
+      id
+      voter
+      support
+      weight
+      reason
+      blockTimestamp
+    }
+  }
+}
+
+
+# ── Query 3: Active proposals only ───────────────────────────────────────────
+# Returns only proposals that are currently in the Active state.
+# Useful for the "vote now" banner on the dashboard.
+query GetActiveProposals {
+  proposals(
+    where: { status: Active }
+    orderBy: endBlock
+    orderDirection: asc
+  ) {
+    id
+    proposalId
+    description
+    endBlock
+    forVotes
+    againstVotes
+    abstainVotes
+  }
+}
+
+
+# ── Query 4: Delegation history for an address ───────────────────────────────
+# Returns the 20 most-recent delegation changes made by a given delegator.
+# Used to show a user's delegation history in their profile.
+query GetDelegationHistory($delegator: String!) {
+  delegations(
+    where: { delegator: $delegator }
+    orderBy: blockTimestamp
+    orderDirection: desc
+    first: 20
+  ) {
+    id
+    delegator
+    fromDelegate
+    toDelegate
+    blockTimestamp
+  }
+}
+
+
+# ── Query 5: Top AGT token holders by balance ────────────────────────────────
+# Returns the 25 largest AGT holders, their current balance, delegated
+# address, and live voting power. Used for the token-holder leaderboard.
+query GetTopHolders {
+  tokenHolders(
+    first: 25
+    orderBy: balance
+    orderDirection: desc
+    where: { balance_gt: "0" }
+  ) {
+    id
+    balance
+    delegatedTo
+    votingPower
+  }
+}
+
+
+# ── Query 6 (bonus): Vault deposit history for a user ────────────────────────
+# Returns all YieldVault deposits made by a given address, newest first.
+# Used to display a user's deposit history in the vault UI.
+query GetUserVaultDeposits($owner: String!) {
+  vaultDeposits(
+    where: { owner: $owner }
+    orderBy: blockTimestamp
+    orderDirection: desc
+    first: 50
+  ) {
+    id
+    sender
+    owner
+    assets
+    shares
+    blockTimestamp
+  }
+}
+
+
+# ── Query 7 (bonus): Protocol summary stats ───────────────────────────────────
+# Single query for the overview dashboard — total proposals, active proposals,
+# total delegations, and total vault deposits.
+query GetProtocolStats {
+  proposals: proposals { id }
+  activeProposals: proposals(where: { status: Active }) { id }
+  delegations: delegations(first: 1000) { id }
+  vaultDeposits: vaultDeposits(first: 1000) { assets }
+}
