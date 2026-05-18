@@ -170,10 +170,10 @@ contract GovernorTest is Test {
     }
 
     function testVotingDelayValue() public view {
-        assertEq(governor.votingDelay(), 7200);
+        assertEq(governor.votingDelay(), 1);
     }
 
     function testVotingPeriodValue() public view {
-        assertEq(governor.votingPeriod(), 50400);
+        assertEq(governor.votingPeriod(), 20);
     }
 }
